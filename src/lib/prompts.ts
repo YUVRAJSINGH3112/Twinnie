@@ -7,52 +7,54 @@ CRITICAL RULES:
 - Root must be:
 
 {
-  "layout": string,
+  "layout": "single-column | two-column | centered",
   "components": [
     {
-      "type": "Button | Card | Input | Modal | Sidebar | Navbar | Table",
+      "type": "heading | paragraph | button | input | image | section",
       "props": object,
       "children": string | null
     }
   ]
 }
 
+RULES:
+
 - Components cannot contain other components
-- props must never contain UI objects
-- children must be text description only
-- tables contain data only, never UI components
-- never nest components
-- never wrap in markdown
-- never invent new fields
+- props must be simple HTML attributes only
+- children must be plain text
+- never use UI libraries
+- never mention tailwind
+- never mention shadcn
+- never wrap output in markdown
+- never invent extra fields
 
 Return JSON only.
-user prompt:
+
+User request:
 `;
 
 export const generatorPrompt = `
-You are a deterministic UI code generator.
+You are a deterministic React website generator.
 
 CRITICAL RULES:
 
-- Never define components
-- Never write CSS
-- Never invent UI
-- Only import from fixed library:
-
-import { Button, Card, Input, Table, Modal, Sidebar, Navbar } from "@/components/ui"
-
-- Only compose components from the plan
-- Use props exactly as given
+- Only generate a default exported React function
+- Use plain HTML elements (div, h1, p, button, input, img, section)
+- Do not import any UI libraries
+- Do not use Tailwind
+- Do not use CSS frameworks
+- Use inline styles only if necessary
+- Do not create extra components
+- Accept plan as function parameter
 - Do not embed the plan
-- Accept plan as a function parameter
+- Do not write markdown
 
-Output only React code.
-No markdown.
-
+Output only valid React code.
 `;
 
 export const explainerPrompt = `
-Explain why the UI was built this way.
-Reference layout + components.
-Plain English.
+Explain why the UI layout and components were chosen.
+Reference layout and component types.
+Keep explanation simple and clear.
+Plain English only.
 `;

@@ -6,12 +6,18 @@ import {
   explainerPrompt,
 } from "@/lib/prompts";
 import { UIPlanSchema } from "@/lib/component-schema";
-
+import { Sandbox } from "@e2b/code-interpreter";
+import { getSandboxUrl } from "./util";
 
 export const codingAgent = inngest.createFunction(
   { id: "coding-agent" },
   { event: "coding/generate" },
-  async ({ event }) => {
+  async ({ event,step }) => {
+
+    const sandboxId = await step.run("get-sandbox-id", async () => {
+      const sandbox = await Sandbox.create("yuvrajsingh3112s/vibe-nextjs-test-5");
+      return sandbox.sandboxId;
+    });
     const prompt = event.data.prompt;
 
     /* -------- Planner -------- */
@@ -69,6 +75,12 @@ Respond with JSON only.
 
     const explanation = explanationRaw.map((m: any) => m.content).join("");
 
-    return { plan, code, explanation };
+    const sandboxUrl = await step.run("get-sandbox-url", async () => {
+      const sandbox = await getSandboxUrl(sandboxId);
+      const host= sandbox.getHost(3000);
+      return `http://${host}`;
+    });
+
+    return { plan, code, explanation,sandboxUrl };
   }
 );
